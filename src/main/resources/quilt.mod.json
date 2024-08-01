@@ -1,0 +1,42 @@
+{
+    "schema_version": 1,
+
+    "quilt_loader": {
+        "group": "${group}",
+        "id": "${modid}",
+        "version": "${version}",
+
+        "intermediate_mappings" : "net.fabricmc:intermediary",
+
+        "metadata": {
+            "name": "${display_name}",
+            "description": "Stops slower. Adds some deceleration instead of instant stops.",
+            "contributors": {
+                "StartsMercury": "Author"
+            },
+
+            "contact": {
+                "issues": "https://github.com/StartsMercury/cosmic-player-deceleration/issues",
+                "sources": "https://github.com/StartsMercury/cosmic-player-deceleration"
+            },
+
+            "icon": "assets/cosmic-player-deceleration/icon.png"
+        },
+
+        "entrypoints": {
+        },
+
+        "depends": [
+            {
+                "id": "cosmicreach",
+                "versions": "*"
+            },
+            {
+                "id": "cosmicquilt",
+                "version": "*"
+            }
+        ]
+    },
+
+    "mixin": "cosmic-player-deceleration.mixins.json"
+}
