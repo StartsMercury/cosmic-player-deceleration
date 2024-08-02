@@ -3,6 +3,18 @@
 Stops slower. Adds some deceleration instead of almost immediately stopping for
 supported versions of Cosmic Reach.
 
+## Video Demonstration
+
+Following are videos and applies to supported versions of Cosmic Reach.
+
+### With Mod
+
+https://github.com/user-attachments/assets/f6df18b9-4ae8-45df-8980-735f07c78e5f
+
+### Without Mod
+
+https://github.com/user-attachments/assets/70a3e9e3-9433-4683-8efa-9a7d83c080b9
+
 ## Downloads
 
 Cosmic Player Deceleration is currently only officially available on GitHub. All
