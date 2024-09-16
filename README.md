@@ -3,6 +3,15 @@
 Stops slower. Adds some deceleration instead of almost immediately stopping for
 supported versions of Cosmic Reach.
 
+## Downloads
+
+Cosmic Player Deceleration is only officially available on CRMM and GitHub. All
+published version of this mod are both in
+[CRMM](https://www.crmm.tech/mod/cosmic-player-deceleration/versions) and [GitHub Releases](https://github.com/StartsMercury/cosmic-player-deceleration/releases):
+
+> * <https://www.crmm.tech/mod/cosmic-player-deceleration/versions>
+> * <https://github.com/StartsMercury/cosmic-player-deceleration/releases>
+
 ## Video Demonstration
 
 Following are videos and applies to supported versions of Cosmic Reach.
@@ -14,15 +23,6 @@ https://github.com/user-attachments/assets/f6df18b9-4ae8-45df-8980-735f07c78e5f
 ### Without Mod
 
 https://github.com/user-attachments/assets/70a3e9e3-9433-4683-8efa-9a7d83c080b9
-
-## Downloads
-
-Cosmic Player Deceleration is only officially available on CRMM and GitHub. All
-published version of this mod are both in
-[CRMM](https://www.crmm.tech/mod/cosmic-player-deceleration/versions) and [GitHub Releases](https://github.com/StartsMercury/cosmic-player-deceleration/releases):
-
-> * <https://www.crmm.tech/mod/cosmic-player-deceleration/versions>
-> * <https://github.com/StartsMercury/cosmic-player-deceleration/releases>
 
 ---
 
