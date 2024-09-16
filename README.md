@@ -17,11 +17,12 @@ https://github.com/user-attachments/assets/70a3e9e3-9433-4683-8efa-9a7d83c080b9
 
 ## Downloads
 
-Cosmic Player Deceleration is currently only officially available on GitHub. All
-published version of this mod are in
-[Releases](https://github.com/StartsMercury/cosmic-player-deceleration/releases):
+Cosmic Player Deceleration is only officially available on CRMM and GitHub. All
+published version of this mod are both in
+[CRMM](https://www.crmm.tech/mod/cosmic-player-deceleration/versions) and [GitHub Releases](https://github.com/StartsMercury/cosmic-player-deceleration/releases):
 
-> <https://github.com/StartsMercury/cosmic-player-deceleration/releases>
+> * <https://www.crmm.tech/mod/cosmic-player-deceleration/versions>
+> * <https://github.com/StartsMercury/cosmic-player-deceleration/releases>
 
 ---
 
