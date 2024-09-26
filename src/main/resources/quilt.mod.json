@@ -20,7 +20,7 @@
                 "sources": "https://github.com/StartsMercury/cosmic-player-deceleration"
             },
 
-            "icon": "assets/cosmic-player-deceleration/icon.png"
+            "icon": "cosmic-player-deceleration/textures/icon.png"
         },
 
         "entrypoints": {
