@@ -1,7 +1,10 @@
 package io.github.startsmercury.cosmic_player_deceleration.mixin.client;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import finalforeach.cosmicreach.entities.Entity;
 import finalforeach.cosmicreach.entities.PlayerController;
@@ -18,74 +21,107 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(PlayerController.class)
 public abstract class PlayerControllerMixin {
-    /**
-     * Buffer vector before committing to {@code Entity.onceVelocity}.
-     *
-     * @see Entity#onceVelocity
-     */
     @Unique
-    private final Vector3 tmpImpulse = new Vector3();
+    private float retainedMovementX = 0.0f;
 
-    /**
-     * Clear buffers of previous values before using them.
-     *
-     * @param callback the injector callback
-     */
-    @Inject(method = "updateMovement(Lfinalforeach/cosmicreach/world/Zone;)V", at = @At(value = "FIELD", ordinal = 0, target = "Lfinalforeach/cosmicreach/entities/Entity;onceVelocity:Lcom/badlogic/gdx/math/Vector3;"))
-    private void clearBuffers(final CallbackInfo callback) {
-        this.tmpImpulse.setZero();
+    @Unique
+    private float retainedMovementZ = 0.0f;
+
+    @WrapOperation(
+        method = "updateMovement(Lfinalforeach/cosmicreach/world/Zone;)V",
+        at = @At(
+            value = "INVOKE",
+            slice = "z",
+            target = "Lcom/badlogic/gdx/math/Vector3;set(FFF)Lcom/badlogic/gdx/math/Vector3;",
+            ordinal = 0
+        )
+    )
+    private Vector3 persistPreviousMovement(
+        final Vector3 instance,
+        final float x,
+        final float y,
+        final float z,
+        final Operation<Vector3> original,
+        final @Local(ordinal = 0) Entity entity,
+        final @Local(ordinal = 1) float playerSpeed
+    ) {
+        if (entity.isOnGround || entity.noClip) {
+            return original.call(instance, x, y, z);
+        } else {
+            return instance.set(this.retainedMovementX, 0.0F, this.retainedMovementZ);
+        }
     }
 
-    /**
-     * Replace client delta time with server's. This is essential for this mod
-     * as the client delta time will result in fps-dependent movement speed.
-     *
-     * @param original the original client delta time
-     * @return the server delta time
-     */
-    @ModifyExpressionValue(method = "updateMovement", at = @At(value = "INVOKE", target = "Lcom/badlogic/gdx/Graphics;getDeltaTime()F"))
-    private float overrideWithServerDeltaTime(float original) {
-        return 1.0F / 20.0F;
-    }
-
-    /**
-     * Use the buffer instead of directly modifying stuff.
-     *
-     * @param original the original value
-     * @return the buffered value
-     */
     @ModifyExpressionValue(
-        method = "updateMovement",
-        at = @At(value = "FIELD", target = """
-            Lfinalforeach/cosmicreach/entities/Entity;onceVelocity:\
-            Lcom/badlogic/gdx/math/Vector3;\
-        """)
+        method = "updateMovement(Lfinalforeach/cosmicreach/world/Zone;)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lcom/badlogic/gdx/math/Vector3;nor()Lcom/badlogic/gdx/math/Vector3;",
+            ordinal = 1
+        )
     )
-    private Vector3 replaceWithBuffer(final Vector3 original) {
-        return this.tmpImpulse;
+    private Vector3 captureNormalizedHorizontalMovement(
+        final Vector3 original,
+        final @Local(ordinal = 0) Entity entity
+    ) {
+        if (!entity.noClip) {
+            this.retainedMovementX = original.x;
+            this.retainedMovementZ = original.z;
+        }
+        return original;
     }
 
-    /**
-     * Commits the impulse buffer.
-     *
-     * @param callback the injector callback
-     * @param entity the player entity
-     */
-    @Inject(
-        method = "updateMovement",
-        at = @At(value = "FIELD", ordinal = 2, target = """
-            Lfinalforeach/cosmicreach/entities/Entity;onceVelocity:\
-            Lcom/badlogic/gdx/math/Vector3;\
-        """)
+    @WrapOperation(
+        method = "updateMovement(Lfinalforeach/cosmicreach/world/Zone;)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lcom/badlogic/gdx/math/Vector3;scl(F)Lcom/badlogic/gdx/math/Vector3;",
+            ordinal = 3
+        )
     )
-    private void commitImpulse(
+    private Vector3 captureHorizontalMovement(
+        final Vector3 instance,
+        final float scalar,
+        final Operation<Vector3> original,
+        final @Local(ordinal = 0) Entity entity
+    ) {
+        if (!entity.noClip) {
+            this.retainedMovementX = instance.x;
+            this.retainedMovementZ = instance.z;
+        }
+        return original.call(instance, scalar);
+    }
+
+    @Inject(
+        method = "updateMovement(Lfinalforeach/cosmicreach/world/Zone;)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lfinalforeach/cosmicreach/entities/Entity;isInFluid()Z",
+            ordinal = 0
+        )
+    )
+    private void applyOffGroundDrag(
         final CallbackInfo callback,
         final @Local(ordinal = 0) Entity entity
     ) {
-        if (this.tmpImpulse.isZero()) {
-            this.tmpImpulse.set(entity.onceVelocity);
-        } else {
-            entity.onceVelocity.set(this.tmpImpulse);
+        if (!entity.noClip) {
+            final var x = this.retainedMovementX;
+            final var z = this.retainedMovementZ;
+
+            final var len2 = x * x + z * z;
+            if (len2 > 0.0F) {
+                final var factor = (float) Math.pow(0.1, Gdx.graphics.getDeltaTime());
+
+                if (len2 * factor * factor > 0.01F) {
+                    this.retainedMovementX = x * factor;
+                    this.retainedMovementZ = z * factor;
+                    return;
+                }
+            }
         }
+
+        // Fall-through: Apply Defaults
+        this.retainedMovementX = 0.0F;
+        this.retainedMovementZ = 0.0F;
     }
 }

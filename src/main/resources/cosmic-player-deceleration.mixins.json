@@ -3,11 +3,10 @@
     "minVersion": "0.8",
     "package": "io.github.startsmercury.cosmic_player_deceleration.mixin.client",
     "compatibilityLevel": "JAVA_17",
-    "mixins": [],
-    "client": [
-        "PlayerControllerMixin",
-        "EntityMixin"
+    "mixins": [
+        "PlayerControllerMixin"
     ],
+    "client": [],
     "injectors": {
         "defaultRequire": 1
     }
